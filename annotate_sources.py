@@ -13,7 +13,8 @@ class Config :
     month="09"
     year="2015"
     category="40"
-    baseline="test-publishers.csv"
+    # baseline="../ivw-online/publishers.csv"
+    baseline="./test-publishers.csv"
 
 
     annotated_baseline="result/test-publishers-annotated.csv"
@@ -31,13 +32,17 @@ def find_match(base,sources) :
 
 def find_visits(url,df) :
     if url :
-        return df.ix[url]["Kat-Visits"]
+        return df.ix[url]["visits"]
     return float("NaN")
 
 
 if __name__=="__main__" :
     ivw=get_ivw(Config.year,Config.month,Config.category)
-    by_url=ivw.groupby("url").aggregate({ "Kat-Visits": "max" })
+    for cn in ("Kat-Visits", "PIs in gewählten Kategorien gesamt") :
+        if cn in ivw :
+            by_url=ivw.groupby("url").aggregate({ cn : "max" })
+            by_url["visits"]=by_url[cn]
+            break
     sources=dict([(a.replace("www",""),a) for a in ivw["url"] if a])
     baseline=pd.read_csv(Config.baseline)
     baseline["ivw"]=baseline["url"].apply(lambda a: find_match(a,sources))

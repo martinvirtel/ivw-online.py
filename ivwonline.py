@@ -24,17 +24,17 @@ def int_or_NaN(a) :
     try :
         return int(a.replace(".",""))
     except ValueError as e :
-        # logging.debug("Value %s: %s -> NaN" % (a,e))
+        # logger.debug("Value %s: %s -> NaN" % (a,e))
         return float("NaN")
 
 def site_or_None(s) :
     alls=" ".join([repr(a) for a in s])
-    for r in (re.compile(r"\(http://(?P<hostname>[^/]+)/?\)"),
+    for r in (re.compile(r"http://(?P<hostname>[^/\)]+)"),
               re.compile(r"\b(?P<hostname>([a-zA-Z\-\_]+\.)+[a-zA-Z]{2,3})\b")) :
         m=r.search(alls)
         if m :
             m=m.groupdict()["hostname"].lower()
-            # logger.debug("Hostname {alls} -> {m}".format(**locals()))
+            #logger.debug("Hostname {alls} -> {m}".format(**locals()))
             return m
     return False
 
